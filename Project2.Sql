@@ -129,7 +129,7 @@ WHERE BOOK_COPIES.branch_id = (
 --Insert a new BOOK with the following info: Title: ‘Harry Potter and the Sorcerer's Stone’ ;
 --Book_author: ‘J.K. Rowling’
 INSERT INTO BOOK (title, book_author)
-VALUES ('Harry Potter and the Sorcerer\'s Stone', 'J.K. Rowling');
+VALUES ('Harry Potter and the Sorcerer''s Stone', 'J.K. Rowling');
 
 --4-b)
 --You also need to insert the following branches:
