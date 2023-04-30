@@ -6,6 +6,7 @@ Harrison Cawood: 1001729180
 Date 4/11/2023
 """
 #imports
+import utility
 import tkinter as tk                    
 from tkinter import ttk
 import sqlite3
@@ -92,6 +93,14 @@ def checkout_book_get_label():
     iq.close()
 
 def checkout_book_handler():
+    if(not utility.check_id(task1_book_id.get()) or
+      not utility.check_id(task1_card_no.get()) or
+      not utility.check_date(task1_date_out.get()) or
+      not utility.check_date(task1_due_date.get())):
+        task1_warning=tk.Label(tab1, text='INPUT ERROR ', fg="red")
+        task1_warning.grid(row=9, column=0,pady=5)
+        return
+        
     checkout_book_conn= sqlite3.connect("Library_Database.db")
     checkout_book_cur=checkout_book_conn.cursor()
     #dictionary implementation
