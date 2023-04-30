@@ -12,7 +12,9 @@ DROP TABLE IF EXISTS BOOK;
 CREATE TABLE BOOK (
     book_id INTEGER PRIMARY KEY AUTOINCREMENT, --Will be assigned automatically on insert
     title VARCHAR(255) NOT NULL, --non unique by choice
-    book_author VARCHAR(255) NOT NULL --author cannot be a foreign key because author is name not unique
+    book_publisher VARCHAR(255) NOT NULL, 
+    FOREIGN KEY(book_publisher) REFERENCES PUBLISHER(publisher_name)
+        ON UPDATE CASCADE
 );
 
 DROP TABLE IF EXISTS BOOK_AUTHORS;
@@ -128,8 +130,10 @@ WHERE BOOK_COPIES.branch_id = (
 --4-a)
 --Insert a new BOOK with the following info: Title: ‘Harry Potter and the Sorcerer's Stone’ ;
 --Book_author: ‘J.K. Rowling’
-INSERT INTO BOOK (title, book_author)
-VALUES ('Harry Potter and the Sorcerer''s Stone', 'J.K. Rowling');
+INSERT INTO BOOK (title, book_publisher)
+VALUES ('Harry Potter and the Sorcerer''s Stone','');
+INSERT INTO BOOK_AUTHORS (book_id, author_name)
+VALUES ((SELECT book_id FROM BOOK WHERE title = 'Harry Potter and the Sorcerer''s Stone' ), 'J.K. Rowling');
 
 --4-b)
 --You also need to insert the following branches:
