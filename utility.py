@@ -22,7 +22,7 @@ def check_date(input):
         print("failed date check")
         return False
 def check_string(input):
-    if(isinstance(input, str)):
+    if(isinstance(input, str) and len(input)>0):
         return True
     else:
         print("failed string check")
