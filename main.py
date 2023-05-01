@@ -418,7 +418,8 @@ def search_borrower_fees_handler():
     else:
       search_borrowers_cur.execute('''SELECT card_no, name, SUM(LateFeeBalance)
                                       FROM vBookLoanInfo 
-                                      GROUP BY card_no;''')
+                                      GROUP BY card_no
+                                      ORDER BY SUM(LateFeeBalance) DESC;''')
       
     records = search_borrowers_cur.fetchall()
     print_records = ''
