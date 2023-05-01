@@ -260,11 +260,37 @@ add_books_button.grid(row=4, column=0, columnspan=2, pady=5, padx=10)
 
 
 """TASK 4""" 
-ttk.Label(tab4, 
-          text ="IMPLEMENT HERE").grid(column = 0, 
-                               row = 0,
-                               padx = 30,
-                               pady = 30)  
+ttk.Label(tab4, text ="QUERY COPIES").grid(column = 0, row = 0, padx = 30, pady = 30)  
+task4_book_name= tk.Entry(tab4, width=30)
+task4_book_name.grid(row = 1, column=1, pady=5)
+task4_book_name_label= tk.Label(tab4, text='Book title: ')
+task4_book_name_label.grid(row=1, column=0,pady=5)
+
+def search_copies_handler():
+    task4_warning=tk.Label(tab4, text='INPUT ERROR ', fg="red")
+    if(not task4_book_name.get()):
+      task4_warning.grid(row=6, column=0,pady=5)
+      return
+    query_copies_conn= sqlite3.connect("Library_Database.db")
+    query_copies_cur=query_copies_conn.cursor()
+    query_copies_cur.execute('''SELECT LB.branch_name, BC.no_of_copies
+                                FROM Book as B JOIN Book_Copies as BC ON B.book_id=BC.book_id JOIN Library_Branch as LB on BC.Branch_id=LB.branch_id
+                                WHERE B.title=:title;''',{
+                                  'title':task4_book_name.get()
+                                })
+    records = query_copies_cur.fetchall()
+    print_records = ''
+    for record in records: 
+          #IF AN ATTRIBUT IS NOT STRING, YOU GOTTA str() it.
+          print_records += str("BRANCH: "+record[0]+" | # OF COPIES: "+str(record[1])+"\n")
+    #this is inside handler so wont render till pressed
+    task4_result_label  = tk.Label(tab4, text=print_records)
+    task4_result_label.grid(row=7, column=0, columnspan=2, pady=5, padx=1)
+    
+    
+search_copies_button = tk.Button(tab4, text = "Search Lates", command=search_copies_handler)
+search_copies_button.grid(row=4, column=0, columnspan=2, pady=5, padx=10)
+
 
 """TASK 5""" 
 ttk.Label(tab5, text ="LATE BOOKS").grid(column = 0, row = 0, padx = 30, pady = 30)  
