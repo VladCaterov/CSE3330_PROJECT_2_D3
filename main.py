@@ -177,12 +177,13 @@ def add_borrower_get_label():
         #IF AN ATTRIBUT IS NOT STRING, YOU GOTTA str() it.
         print_records += str("CARD NO: "+str(record[0])+"\n")
     #this is inside handler so wont render till pressed
-    task2_warning.destroy()
     task2_result_label  = tk.Label(tab2, text=print_records)
     task2_result_label.grid(row=7, column=0, columnspan=2, pady=5, padx=10)
     #ALWAYS DO THIS AFTER SQL
     iq.commit()
     iq.close()
+
+task2_warning=tk.Label(tab2, text='INPUT ERROR ', fg="red")
 
 def add_borrower_handler():
     if(not utility.check_string(task2_name.get()) or
@@ -190,17 +191,7 @@ def add_borrower_handler():
       not utility.check_phone(task2_phone.get())):
         task2_warning.grid(row=9, column=0,pady=5)
         return
-    add_borrower_conn= sqlite3.connect("Library_Database.db")
-    add_borrower_cur=add_borrower_conn.cursor()
-    #dictionary implementation
-    add_borrower_cur.execute("INSERT INTO BORROWER (name, address, phone) VALUES (:name_u, :address_u, :phone_u)",
-                              {
-                                'name_u': task2_name.get(),
-                                'address_u': task2_address.get(),
-                                'phone_u': task2_phone.get(),
-                                
-                              })
-    
+    task2_warning.grid_forget()
     try:
       add_borrower_conn= sqlite3.connect("Library_Database.db")
       add_borrower_cur=add_borrower_conn.cursor()
@@ -212,8 +203,20 @@ def add_borrower_handler():
                                   'phone_u': task2_phone.get(),
                                   
                                 })
+    
+    
+      add_borrower_conn= sqlite3.connect("Library_Database.db")
+      add_borrower_cur=add_borrower_conn.cursor()
+      #dictionary implementation
+      add_borrower_cur.execute("INSERT INTO BORROWER (name, address, phone) VALUES (:name_u, :address_u, :phone_u)",
+                                {
+                                  'name_u': task2_name.get(),
+                                  'address_u': task2_address.get(),
+                                  'phone_u': task2_phone.get(),
+                                  
+                                })
     except:
-        print("DB failed.")
+      print("DB failed.")
 
     finally:
       add_borrower_conn.commit()
