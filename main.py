@@ -64,7 +64,7 @@ task1_date_out_label.grid(row=4, column=0,pady=5)
 
 task1_due_date= tk.Entry(tab1, width=30)
 task1_due_date.grid(row = 5, column=1,pady=5)
-task1_due_date_label=tk.Label(tab1, text='Date Out: ')
+task1_due_date_label=tk.Label(tab1, text='Due date: ')
 task1_due_date_label.grid(row=5, column=0,pady=5)
 
 #buttons and handlers
@@ -84,7 +84,7 @@ def checkout_book_get_label():
     print_records = ''
     for record in records: 
         #IF AN ATTRIBUT IS NOT STRING, YOU GOTTA str() it.
-        print_records += str("BOOK: "+record[0]+"\nREMAINING COPIES "+str(record[1])+"\n")
+        print_records += str("BOOK: "+record[0]+"\nREMAINING COPIES: "+str(record[1])+"\n")
     #this is inside handler so wont render till pressed
     task1_result_label  = tk.Label(tab1, text=print_records)
     task1_result_label.grid(row=7, column=0, columnspan=2, pady=5, padx=10)
@@ -92,14 +92,16 @@ def checkout_book_get_label():
     iq.commit()
     iq.close()
 
+task1_warning=tk.Label(tab1, text='INPUT ERROR ', fg="red")
+
 def checkout_book_handler():
     if(not utility.check_id(task1_book_id.get()) or
       not utility.check_id(task1_card_no.get()) or
       not utility.check_date(task1_date_out.get()) or
       not utility.check_date(task1_due_date.get())):
-        task1_warning=tk.Label(tab1, text='INPUT ERROR ', fg="red")
         task1_warning.grid(row=9, column=0,pady=5)
         return
+    task1_warning.grid_forget()
         
     checkout_book_conn= sqlite3.connect("Library_Database.db")
     checkout_book_cur=checkout_book_conn.cursor()
@@ -176,12 +178,14 @@ def add_borrower_get_label():
     iq.commit()
     iq.close()
 
+task2_warning=tk.Label(tab1, text='INPUT ERROR ', fg="red")
+
 def add_borrower_handler():
     if(not utility.check_string(task2_name.get()) or
       not utility.check_string(task2_address.get())):
-        task1_warning=tk.Label(tab1, text='INPUT ERROR ', fg="red")
-        task1_warning.grid(row=9, column=0,pady=5)
+        task2_warning.grid(row=9, column=0,pady=5)
         return
+    task2_warning.grid_forget()
         
     add_borrower_conn= sqlite3.connect("Library_Database.db")
     add_borrower_cur=add_borrower_conn.cursor()
@@ -218,15 +222,17 @@ task3_book_publisher.grid(row = 3, column=1, pady=5)
 task3_book_publisher_label= tk.Label(tab3, text='Book publisher: ')
 task3_book_publisher_label.grid(row=3, column=0,pady=5)
 
+task3_warning=tk.Label(tab3, text='INPUT ERROR ', fg="red")
+
 def add_books_handler():
-  task3_warning=tk.Label(tab3, text='INPUT ERROR ', fg="red")
   if(not task3_book_name.get() or
      not task3_book_publisher.get() or
      not task3_book_author.get()
      ):
       task3_warning.grid(row=6, column=0,pady=5)
       return
-  print("something")
+  task3_warning.grid_forget()
+
   add_books_conn= sqlite3.connect("Library_Database.db")
   add_books_cur=add_books_conn.cursor()
   
@@ -266,11 +272,13 @@ task4_book_name.grid(row = 1, column=1, pady=5)
 task4_book_name_label= tk.Label(tab4, text='Book title: ')
 task4_book_name_label.grid(row=1, column=0,pady=5)
 
+task4_warning=tk.Label(tab4, text='INPUT ERROR ', fg="red")
+
 def search_copies_handler():
-    task4_warning=tk.Label(tab4, text='INPUT ERROR ', fg="red")
     if(not task4_book_name.get()):
       task4_warning.grid(row=6, column=0,pady=5)
       return
+    task4_warning.grid_forget()
     query_copies_conn= sqlite3.connect("Library_Database.db")
     query_copies_cur=query_copies_conn.cursor()
     query_copies_cur.execute('''SELECT LB.branch_name, BC.no_of_copies
@@ -304,13 +312,15 @@ task5_date_2.grid(row = 2, column=1, pady=5)
 task5_date_2_label= tk.Label(tab5, text='END DATE: ')
 task5_date_2_label.grid(row=2, column=0,pady=5)
 
+task5_warning=tk.Label(tab3, text='INPUT ERROR ', fg="red")
+
 def search_lates_handler():
-  task5_warning=tk.Label(tab3, text='INPUT ERROR ', fg="red")
   if(not utility.check_date(task5_date_1.get()) or
      not utility.check_date(task5_date_2.get())
      ):
       task5_warning.grid(row=6, column=0,pady=5)
       return
+  task5_warning.grid_forget()
   search_lates_conn= sqlite3.connect("Library_Database.db")
   search_lates_cur=search_lates_conn.cursor()
   search_lates_cur.execute('''SELECT title, julianday(BL.returned_date)-julianday(BL.due_date) AS Days_Late
