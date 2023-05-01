@@ -6,16 +6,19 @@ Harrison Cawood: 1001729180
 Date 4/11/2023
 """
 #imports
+#needs run: python3 -m pip install -U prettytable
 import utility
 import tkinter as tk                    
 from tkinter import ttk
+from tkinter.font import Font
+from prettytable import PrettyTable
 import sqlite3
 
 
 #root code
 root = tk.Tk()
 root.title("LIBRARY DBMS")
-root.geometry("800x400")
+root.geometry("800x800")
 tabControl = ttk.Notebook(root)
 
 #adds tab to the root
@@ -37,11 +40,13 @@ tabControl.add(tab7, text ='Book Info')
 
 tabControl.pack(expand = 1, fill ="both")
 
+bold_font = Font(family="Helvetica", size=12, weight="bold")
+table_font = Font(family="Cascadia Code", size=8)
 """TASK 1""" 
 #THESE GUI ELEMENTS ARE SIMPLE. Only important note, is prefix names with task#, cause they 
 #have to have global scope, and duplicates are hard to track.
 #If you work in tab1, make sure your UI elements are set to tab1. 
-ttk.Label(tab1, text ="CHECKOUT BOOK").grid(column = 0, row = 0, padx = 30, pady = 10)  
+ttk.Label(tab1, text ="CHECKOUT BOOK", font= bold_font).grid(column = 0, row = 0, padx = 30, pady = 10)  
 task1_book_id= tk.Entry(tab1, width=30)
 task1_book_id.grid(row = 1, column=1, pady=5)
 task1_book_id_label= tk.Label(tab1, text='Book id: ')
@@ -59,12 +64,12 @@ task1_card_no_label.grid(row=3, column=0,pady=5)
 
 task1_date_out= tk.Entry(tab1, width=30)
 task1_date_out.grid(row = 4, column=1,pady=5)
-task1_date_out_label=tk.Label(tab1, text='Date Out: ')
+task1_date_out_label=tk.Label(tab1, text='Date Out: \n(YYYY-mm-dd)')
 task1_date_out_label.grid(row=4, column=0,pady=5)
 
 task1_due_date= tk.Entry(tab1, width=30)
 task1_due_date.grid(row = 5, column=1,pady=5)
-task1_due_date_label=tk.Label(tab1, text='Due date: ')
+task1_due_date_label=tk.Label(tab1, text='Due date: \n(YYYY-mm-dd)')
 task1_due_date_label.grid(row=5, column=0,pady=5)
 
 #buttons and handlers
@@ -137,7 +142,7 @@ checkout_book_button.grid(row=6, column=0, columnspan=2, pady=5, padx=10)
 # number as if you are giving a new library card. Submit your editable SQL query that your code
 # executes.
 ttk.Label(tab2, 
-          text ="ADD BORROWER").grid(column = 0, 
+          text ="ADD BORROWER", font= bold_font).grid(column = 0, 
                                row = 0,
                                padx = 30,
                                pady = 10)  
@@ -153,7 +158,7 @@ task2_address_label.grid(row=2, column=0,pady=5)
 
 task2_phone= tk.Entry(tab2, width=30)
 task2_phone.grid(row = 3, column=1,pady=5)
-task2_phone_label=tk.Label(tab2, text='Phone: ')
+task2_phone_label=tk.Label(tab2, text='Phone: \n(XXX-XXX-XXXX)')
 task2_phone_label.grid(row=3, column=0,pady=5)
 task2_warning=tk.Label(tab1, text='INPUT ERROR ', fg="red")
 
@@ -175,7 +180,7 @@ def add_borrower_get_label():
     print_records = ''
     for record in records: 
         #IF AN ATTRIBUT IS NOT STRING, YOU GOTTA str() it.
-        print_records += str("CARD NO: "+str(record[0])+"\n")
+        print_records += str("USER ADDED SUCCESSFULLY!\nCARD NO: "+str(record[0])+"\n")
     #this is inside handler so wont render till pressed
     task2_result_label  = tk.Label(tab2, text=print_records)
     task2_result_label.grid(row=7, column=0, columnspan=2, pady=5, padx=10)
@@ -227,7 +232,7 @@ add_borrower_button = tk.Button(tab2, text = "Add Borrower", command=add_borrowe
 add_borrower_button.grid(row=6, column=0, columnspan=2, pady=5, padx=10)
 
 """TASK 3""" 
-ttk.Label(tab3, text ="ADD BOOK").grid(column = 0, row = 0, padx = 30, pady = 30)  
+ttk.Label(tab3, text ="ADD BOOK", font= bold_font).grid(column = 0, row = 0, padx = 30, pady = 30)  
 task3_book_name= tk.Entry(tab3, width=30)
 task3_book_name.grid(row = 1, column=1, pady=5)
 task3_book_name_label= tk.Label(tab3, text='Book title: ')
@@ -289,7 +294,7 @@ add_books_button.grid(row=4, column=0, columnspan=2, pady=5, padx=10)
 
 
 """TASK 4""" 
-ttk.Label(tab4, text ="QUERY COPIES").grid(column = 0, row = 0, padx = 30, pady = 30)  
+ttk.Label(tab4, text ="QUERY COPIES", font= bold_font).grid(column = 0, row = 0, padx = 30, pady = 30)  
 task4_book_name= tk.Entry(tab4, width=30)
 task4_book_name.grid(row = 1, column=1, pady=5)
 task4_book_name_label= tk.Label(tab4, text='Book title: ')
@@ -324,15 +329,15 @@ search_copies_button.grid(row=4, column=0, columnspan=2, pady=5, padx=10)
 
 
 """TASK 5""" 
-ttk.Label(tab5, text ="LATE BOOKS").grid(column = 0, row = 0, padx = 30, pady = 30)  
+ttk.Label(tab5, text ="LATE BOOKS", font= bold_font).grid(column = 0, row = 0, padx = 30, pady = 30)  
 task5_date_1= tk.Entry(tab5, width=30)
 task5_date_1.grid(row = 1, column=1, pady=5)
-task5_date_1_label= tk.Label(tab5, text='START DATE: ')
+task5_date_1_label= tk.Label(tab5, text='START DATE:  \n(YYYY-mm-dd)')
 task5_date_1_label.grid(row=1, column=0,pady=5)
 
 task5_date_2= tk.Entry(tab5, width=30)
 task5_date_2.grid(row = 2, column=1, pady=5)
-task5_date_2_label= tk.Label(tab5, text='END DATE: ')
+task5_date_2_label= tk.Label(tab5, text='END DATE:  \n(YYYY-mm-dd)')
 task5_date_2_label.grid(row=2, column=0,pady=5)
 
 task5_warning=tk.Label(tab3, text='INPUT ERROR ', fg="red")
@@ -354,20 +359,22 @@ def search_lates_handler():
                                 'date2': task5_date_2.get()
                             })
   records = search_lates_cur.fetchall()
-  print_records = ''
+  task5_table = PrettyTable()
+  task5_table.field_names=["TITLE","DAYS LATE"]
+  task5_table.hrules = True
   for record in records: 
         #IF AN ATTRIBUT IS NOT STRING, YOU GOTTA str() it.
-        print_records += str("TITLE: "+record[0]+" | DAYS LATE: "+str(record[1])+"\n")
+        task5_table.add_row([record[0],str(record[1])])
   #this is inside handler so wont render till pressed
-  task5_result_label  = tk.Label(tab5, text=print_records)
-  task5_result_label.grid(row=7, column=0, columnspan=2, pady=5, padx=1)
+  task5_result_label  = tk.Label(tab5,font=table_font, justify='left', text=task5_table.get_string())
+  task5_result_label.grid(row=7, column=0, columnspan=3, pady=5, padx=1)
     
 
 search_lates_button = tk.Button(tab5, text = "Search Lates", command=search_lates_handler)
 search_lates_button.grid(row=4, column=0, columnspan=2, pady=5, padx=10)
 
 """TASK 6""" 
-ttk.Label(tab6, text ="BORROWER FEES").grid(column = 0, row = 0, padx = 30, pady = 30)  
+ttk.Label(tab6, text ="BORROWER FEES", font= bold_font).grid(column = 0, row = 0, padx = 30, pady = 30)  
 task6_borrower_name= tk.Entry(tab6, width=30)
 task6_borrower_name.grid(row = 1, column=1, pady=5)
 task6_borrower_name_label= tk.Label(tab6, text='Filter by Name: ')
@@ -379,7 +386,7 @@ task6_borrower_id_label= tk.Label(tab6, text='Filter by ID: ')
 task6_borrower_id_label.grid(row=2, column=0,pady=5)
 
 task6_warning=tk.Label(tab6, text='INPUT ERROR ', fg="red")
-task6_result_label  = tk.Label(tab6, text="")
+task6_result_label  = tk.Label(tab6, justify='left', font=table_font ,text="")
 
 def search_borrower_fees_handler():
     #This one is different from the rest, its an and statement
@@ -422,13 +429,13 @@ def search_borrower_fees_handler():
                                       ORDER BY SUM(LateFeeBalance) DESC;''')
       
     records = search_borrowers_cur.fetchall()
-    print_records = ''
+    task6_table = PrettyTable()
+    task6_table.hrules = True
+    task6_table.field_names = ["CARD NO", "NAME", "LATE FEE BALANCE"]
     for record in records: 
-          #IF AN ATTRIBUT IS NOT STRING, YOU GOTTA str() it.
-          late_fee = "${:.2f}".format(record[2]) if record[2] != 0 else "$0.00"
-          print_records += str("CARD NO: "+str(record[0])+" | NAME: "+record[1]+ " LATE FEE: ("+late_fee+")\n" )
+          task6_table.add_row([str(record[0]), record[1], "${:.2f}".format(record[2]) if record[2] != 0 else "$0.00" ])
     #this is inside handler so wont render till pressed
-    task6_result_label.config(text=print_records)
+    task6_result_label.config(text=task6_table.get_string())
     task6_result_label.grid(row=7, column=0, columnspan=2, pady=5, padx=1)
 
 
@@ -438,7 +445,7 @@ search_lates_button = tk.Button(tab6, text = "Filter", command=search_borrower_f
 search_lates_button.grid(row=4, column=0, columnspan=2, pady=5, padx=10)
 
 """TASK 7""" 
-ttk.Label(tab7, text ="BOOK INFO").grid(column = 0, row = 0, padx = 30, pady = 30)  
+ttk.Label(tab7, text ="BOOK INFO", font= bold_font).grid(column = 0, row = 0, padx = 30, pady = 30)  
 task7_book_name= tk.Entry(tab7, width=30)
 task7_book_name.grid(row = 1, column=1, pady=5)
 task7_book_name_label= tk.Label(tab7, text='Filter by Title: ')
@@ -450,7 +457,7 @@ task7_book_id_label= tk.Label(tab7, text='Filter by ID: ')
 task7_book_id_label.grid(row=2, column=0,pady=5)
 
 task7_warning=tk.Label(tab7, text='INPUT ERROR ', fg="red")
-task7_result_label  = tk.Label(tab7, text="")
+task7_result_label  = tk.Label(tab7,justify="left", font=table_font,  text="")
 
 def search_book_fees_handler():
     #This one is different from the rest, its an and statement
@@ -494,13 +501,15 @@ def search_book_fees_handler():
                                       ORDER BY SUM(LateFeeBalance) DESC;''')
       
     records = search_book_fee_cur.fetchall()
-    print_records = ''
+    task7_table = PrettyTable()
+    task7_table.hrules = True
+    task7_table.field_names = ["BOOK ID", "TITLE", "LATE FEE BALANCE"]
     for record in records: 
           #IF AN ATTRIBUT IS NOT STRING, YOU GOTTA str() it.
           late_fee = "${:.2f}".format(record[2]) if record[2] != 0 else "Non-Applicable"
-          print_records += str("BOOK ID: "+str(record[0])+" | TITLE: "+record[1]+ " LATE FEE: ("+late_fee+")\n" )
+          task7_table.add_row([str(record[0]), record[1], late_fee])
     #this is inside handler so wont render till pressed
-    task7_result_label.config(text=print_records)
+    task7_result_label.config(text=task7_table.get_string())
     task7_result_label.grid(row=7, column=0, columnspan=2, pady=5, padx=1)
     
 
