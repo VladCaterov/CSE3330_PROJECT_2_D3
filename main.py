@@ -200,12 +200,65 @@ def add_borrower_handler():
 
 add_borrower_button = tk.Button(tab2, text = "Add Borrower", command=add_borrower_handler)
 add_borrower_button.grid(row=6, column=0, columnspan=2, pady=5, padx=10)
+
 """TASK 3""" 
-ttk.Label(tab3, 
-          text ="IMPLEMENT HERE").grid(column = 0, 
-                               row = 0,
-                               padx = 30,
-                               pady = 30)  
+ttk.Label(tab3, text ="ADD BOOK").grid(column = 0, row = 0, padx = 30, pady = 30)  
+task2_book_name= tk.Entry(tab3, width=30)
+task2_book_name.grid(row = 1, column=1, pady=5)
+task2_book_name_label= tk.Label(tab3, text='Book title: ')
+task2_book_name_label.grid(row=1, column=0,pady=5)
+
+task2_book_author= tk.Entry(tab3, width=30)
+task2_book_author.grid(row = 2, column=1, pady=5)
+task2_book_author_label= tk.Label(tab3, text='Book author: ')
+task2_book_author_label.grid(row=2, column=0,pady=5)
+
+task2_book_publisher= tk.Entry(tab3, width=30)
+task2_book_publisher.grid(row = 3, column=1, pady=5)
+task2_book_publisher_label= tk.Label(tab3, text='Book publisher: ')
+task2_book_publisher_label.grid(row=3, column=0,pady=5)
+
+def add_books_handler():
+  task2_warning=tk.Label(tab3, text='INPUT ERROR ', fg="red")
+  if(not task2_book_name.get() or
+     not task2_book_publisher.get() or
+     not task2_book_author.get()
+     ):
+      task2_warning.grid(row=6, column=0,pady=5)
+      return
+  print("something")
+  add_books_conn= sqlite3.connect("Library_Database.db")
+  add_books_cur=add_books_conn.cursor()
+  
+  add_books_cur.execute("INSERT INTO BOOK (title, book_publisher) VALUES (:title, :publisher);",{
+      'title':task2_book_name.get(),
+      'publisher':task2_book_publisher.get()  
+  })
+
+
+  add_books_cur.execute("INSERT INTO BOOK_AUTHORS (book_id, author_name) VALUES ((SELECT book_id FROM BOOK WHERE title = :title), :author);",{
+      'title':task2_book_name.get(),
+      'author':task2_book_author.get()  
+  })
+
+  add_books_cur.execute("INSERT INTO BOOK_COPIES (book_id, branch_id, no_of_copies) SELECT Book.book_id, Library_Branch.branch_id, 5 FROM Book, Library_Branch WHERE title = :title;",{
+      'title':task2_book_name.get(),
+  })
+      
+
+  add_books_conn.commit()
+  add_books_conn.close()
+  task2_warning.destroy()
+  task2_success=tk.Label(tab3, text='SUCCESS', fg="green")
+  task2_success.grid(row=7, column=0,pady=5)
+
+
+
+add_books_button = tk.Button(tab3, text = "Add Book Copies", command=add_books_handler)
+add_books_button.grid(row=4, column=0, columnspan=2, pady=5, padx=10)
+
+
+
 """TASK 4""" 
 ttk.Label(tab4, 
           text ="IMPLEMENT HERE").grid(column = 0, 
