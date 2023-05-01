@@ -21,3 +21,16 @@ def check_date(input):
     else:
         print("failed date check")
         return False
+def check_string(input):
+    if(isinstance(input, str)):
+        return True
+    else:
+        print("failed string check")
+        return False
+def check_phone(input):
+    phone_pattern = "^(\+\d{1,2}\s)?\(?\d{3}\)?[\s.-]\d{3}[\s.-]\d{4}$"
+    match = re.match(phone_pattern, input)
+    if match: return True
+    else:
+        print("failed phone check")
+        return False

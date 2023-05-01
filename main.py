@@ -126,12 +126,14 @@ checkout_book_button = tk.Button(tab1, text = "Checkout Book", command=checkout_
 checkout_book_button.grid(row=6, column=0, columnspan=2, pady=5, padx=10)
 
 
-"""TASK 2""" 
+"""TASK 2"""
+
 ttk.Label(tab2, 
-          text ="IMPLEMENT HERE").grid(column = 0, 
+          text ="ADD BORROWER").grid(column = 0, 
                                row = 0,
                                padx = 30,
                                pady = 30)  
+
 """TASK 3""" 
 ttk.Label(tab3, 
           text ="IMPLEMENT HERE").grid(column = 0, 
