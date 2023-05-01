@@ -102,26 +102,30 @@ def checkout_book_handler():
         task1_warning.grid(row=9, column=0,pady=5)
         return
     task1_warning.grid_forget()
-        
-    checkout_book_conn= sqlite3.connect("Library_Database.db")
-    checkout_book_cur=checkout_book_conn.cursor()
-    #dictionary implementation
-    checkout_book_cur.execute("INSERT INTO BOOK_LOANS (book_id, branch_id, card_no, date_out, due_date) VALUES (:book_id, :branch_id, :card_no, :date_out, :due_date)",
-                              {
-                                'book_id': task1_book_id.get(),
-                                'branch_id': task1_branch_id.get(),
-                                'card_no': task1_card_no.get(),
-                                'date_out': task1_date_out.get(),
-                                'due_date': task1_due_date.get()
-                              })
-    #decrements copies for that branch
-    checkout_book_cur.execute("UPDATE BOOK_COPIES SET no_of_copies = no_of_copies-1 WHERE book_id = :book_id AND branch_id = :branch_id", 
-                              {
-                                'book_id': task1_book_id.get(),
-                                'branch_id': task1_branch_id.get(),
-                              })
-    checkout_book_conn.commit()
-    checkout_book_conn.close()
+    
+    try:
+      checkout_book_conn= sqlite3.connect("Library_Database.db")
+      checkout_book_cur=checkout_book_conn.cursor()
+      #dictionary implementation
+      checkout_book_cur.execute("INSERT INTO BOOK_LOANS (book_id, branch_id, card_no, date_out, due_date) VALUES (:book_id, :branch_id, :card_no, :date_out, :due_date)",
+                                {
+                                  'book_id': task1_book_id.get(),
+                                  'branch_id': task1_branch_id.get(),
+                                  'card_no': task1_card_no.get(),
+                                  'date_out': task1_date_out.get(),
+                                  'due_date': task1_due_date.get()
+                                })
+      #decrements copies for that branch
+      checkout_book_cur.execute("UPDATE BOOK_COPIES SET no_of_copies = no_of_copies-1 WHERE book_id = :book_id AND branch_id = :branch_id", 
+                                {
+                                  'book_id': task1_book_id.get(),
+                                  'branch_id': task1_branch_id.get(),
+                                })
+    except:
+       print("DB update failed")
+    finally:
+      checkout_book_conn.commit()
+      checkout_book_conn.close()
     checkout_book_get_label()
 
 checkout_book_button = tk.Button(tab1, text = "Checkout Book", command=checkout_book_handler)
@@ -178,28 +182,33 @@ def add_borrower_get_label():
     iq.commit()
     iq.close()
 
-task2_warning=tk.Label(tab1, text='INPUT ERROR ', fg="red")
+task2_warning=tk.Label(tab2, text='INPUT ERROR ', fg="red")
 
 def add_borrower_handler():
     if(not utility.check_string(task2_name.get()) or
-      not utility.check_string(task2_address.get())):
+      not utility.check_string(task2_address.get()) or
+      not utility.check_phone(task2_phone.get())):
         task2_warning.grid(row=9, column=0,pady=5)
         return
     task2_warning.grid_forget()
-        
-    add_borrower_conn= sqlite3.connect("Library_Database.db")
-    add_borrower_cur=add_borrower_conn.cursor()
-    #dictionary implementation
-    add_borrower_cur.execute("INSERT INTO BORROWER (name, address, phone) VALUES (:name_u, :address_u, :phone_u)",
-                              {
-                                'name_u': task2_name.get(),
-                                'address_u': task2_address.get(),
-                                'phone_u': task2_phone.get(),
-                                
-                              })
     
-    add_borrower_conn.commit()
-    add_borrower_conn.close()
+    try:
+      add_borrower_conn= sqlite3.connect("Library_Database.db")
+      add_borrower_cur=add_borrower_conn.cursor()
+      #dictionary implementation
+      add_borrower_cur.execute("INSERT INTO BORROWER (name, address, phone) VALUES (:name_u, :address_u, :phone_u)",
+                                {
+                                  'name_u': task2_name.get(),
+                                  'address_u': task2_address.get(),
+                                  'phone_u': task2_phone.get(),
+                                  
+                                })
+    except:
+        print("DB failed.")
+
+    finally:
+      add_borrower_conn.commit()
+      add_borrower_conn.close()        
     add_borrower_get_label()
 
 add_borrower_button = tk.Button(tab2, text = "Add Borrower", command=add_borrower_handler)
@@ -233,28 +242,30 @@ def add_books_handler():
       return
   task3_warning.grid_forget()
 
-  add_books_conn= sqlite3.connect("Library_Database.db")
-  add_books_cur=add_books_conn.cursor()
-  
-  add_books_cur.execute("INSERT INTO BOOK (title, book_publisher) VALUES (:title, :publisher);",{
-      'title':task3_book_name.get(),
-      'publisher':task3_book_publisher.get()  
-  })
+  try:
+    add_books_conn= sqlite3.connect("Library_Database.db")
+    add_books_cur=add_books_conn.cursor()
+    
+    add_books_cur.execute("INSERT INTO BOOK (title, book_publisher) VALUES (:title, :publisher);",{
+        'title':task3_book_name.get(),
+        'publisher':task3_book_publisher.get()  
+    })
 
 
-  add_books_cur.execute("INSERT INTO BOOK_AUTHORS (book_id, author_name) VALUES ((SELECT book_id FROM BOOK WHERE title = :title), :author);",{
-      'title':task3_book_name.get(),
-      'author':task3_book_author.get()  
-  })
+    add_books_cur.execute("INSERT INTO BOOK_AUTHORS (book_id, author_name) VALUES ((SELECT book_id FROM BOOK WHERE title = :title), :author);",{
+        'title':task3_book_name.get(),
+        'author':task3_book_author.get()  
+    })
 
-  add_books_cur.execute("INSERT INTO BOOK_COPIES (book_id, branch_id, no_of_copies) SELECT Book.book_id, Library_Branch.branch_id, 5 FROM Book, Library_Branch WHERE title = :title;",{
-      'title':task3_book_name.get(),
-  })
-      
+    add_books_cur.execute("INSERT INTO BOOK_COPIES (book_id, branch_id, no_of_copies) SELECT Book.book_id, Library_Branch.branch_id, 5 FROM Book, Library_Branch WHERE title = :title;",{
+        'title':task3_book_name.get(),
+    })
+  except:
+     print("DB failed to insert")
+  finally:
+    add_books_conn.commit()
+    add_books_conn.close()
 
-  add_books_conn.commit()
-  add_books_conn.close()
-  task3_warning.destroy()
   task2_success=tk.Label(tab3, text='SUCCESS', fg="green")
   task2_success.grid(row=7, column=0,pady=5)
 
