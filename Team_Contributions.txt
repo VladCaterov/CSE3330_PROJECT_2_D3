@@ -1,0 +1,6 @@
+Matthew McNatt:
+    ER ROUGH DRAFT
+    SQL TABLE CREATION
+    GENERAL QUERY TESTING
+    SQL CODE FIXING
+    PYTHON GUI partial implementation/testing of 1-6
