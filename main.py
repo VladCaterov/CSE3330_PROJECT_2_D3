@@ -127,13 +127,79 @@ checkout_book_button.grid(row=6, column=0, columnspan=2, pady=5, padx=10)
 
 
 """TASK 2"""
-
+# Add information about a new Borrower. Do not provide the CardNo in your query. Output the card
+# number as if you are giving a new library card. Submit your editable SQL query that your code
+# executes.
 ttk.Label(tab2, 
           text ="ADD BORROWER").grid(column = 0, 
                                row = 0,
                                padx = 30,
-                               pady = 30)  
+                               pady = 10)  
+task2_name= tk.Entry(tab2, width=30)
+task2_name.grid(row = 1, column=1, pady=5)
+task2_name_label= tk.Label(tab2, text='Name: ')
+task2_name_label.grid(row=1, column=0,pady=5)
 
+task2_address= tk.Entry(tab2, width=30)
+task2_address.grid(row = 2, column=1,pady=5)
+task2_address_label= tk.Label(tab2, text='Address: ')
+task2_address_label.grid(row=2, column=0,pady=5)
+
+task2_phone= tk.Entry(tab2, width=30)
+task2_phone.grid(row = 3, column=1,pady=5)
+task2_phone_label=tk.Label(tab2, text='Phone: ')
+task2_phone_label.grid(row=3, column=0,pady=5)
+
+
+#buttons and handlers
+#remember its python so definitions have to precede calls or they will be undefined
+"""OUTPUT GENERATOR"""
+def add_borrower_get_label():
+    #basic sqlite interface
+    iq = sqlite3.connect("Library_Database.db")
+    iq_cursor = iq.cursor()
+    iq_cursor.execute("SELECT card_no FROM BORROWER WHERE phone=:phone_u;",
+                      {
+                        'phone_u': task2_phone.get(),
+                      })
+
+    #The following is odd...but its just the established way to parse query output
+    records = iq_cursor.fetchall()
+    print_records = ''
+    for record in records: 
+        #IF AN ATTRIBUT IS NOT STRING, YOU GOTTA str() it.
+        print_records += str("CARD NO: "+str(record[0])+"\n")
+    #this is inside handler so wont render till pressed
+    task2_result_label  = tk.Label(tab2, text=print_records)
+    task2_result_label.grid(row=7, column=0, columnspan=2, pady=5, padx=10)
+    #ALWAYS DO THIS AFTER SQL
+    iq.commit()
+    iq.close()
+
+def add_borrower_handler():
+    if(not utility.check_string(task2_name.get()) or
+      not utility.check_string(task2_address.get())):
+        task1_warning=tk.Label(tab1, text='INPUT ERROR ', fg="red")
+        task1_warning.grid(row=9, column=0,pady=5)
+        return
+        
+    add_borrower_conn= sqlite3.connect("Library_Database.db")
+    add_borrower_cur=add_borrower_conn.cursor()
+    #dictionary implementation
+    add_borrower_cur.execute("INSERT INTO BORROWER (name, address, phone) VALUES (:name_u, :address_u, :phone_u)",
+                              {
+                                'name_u': task2_name.get(),
+                                'address_u': task2_address.get(),
+                                'phone_u': task2_phone.get(),
+                                
+                              })
+    
+    add_borrower_conn.commit()
+    add_borrower_conn.close()
+    add_borrower_get_label()
+
+add_borrower_button = tk.Button(tab2, text = "Add Borrower", command=add_borrower_handler)
+add_borrower_button.grid(row=6, column=0, columnspan=2, pady=5, padx=10)
 """TASK 3""" 
 ttk.Label(tab3, 
           text ="IMPLEMENT HERE").grid(column = 0, 
