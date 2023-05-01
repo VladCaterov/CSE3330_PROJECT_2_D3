@@ -192,3 +192,62 @@ FROM BORROWER as B
 JOIN BOOK_LOANS on B.card_no = BOOK_LOANS.card_no;
 
 
+--Project part 3
+
+--Add late column to the book loans table
+ALTER TABLE BOOK_LOANS
+ADD COLUMN late INTEGER DEFAULT 0;
+
+--Update book loans to add 1 if late
+UPDATE BOOK_LOANS
+SET late = 1
+WHERE julianday(BOOK_LOANS.due_date)-julianday(BOOK_LOANS.returned_date)<0;
+
+
+--Add cloumn late fee to library branch
+ALTER TABLE LIBRARY_BRANCH
+ADD COLUMN Latefee DECIMAL(2,2) DEFAULT 0.0;
+
+--Update columns to add a late fee
+UPDATE LIBRARY_BRANCH
+SET Latefee = 0.25
+WHERE branch_name = "Main Branch";
+
+UPDATE LIBRARY_BRANCH
+SET Latefee = 0.20
+WHERE branch_name = "West Branch";
+
+UPDATE LIBRARY_BRANCH
+SET Latefee = 0.50
+WHERE branch_name = "East Branch";
+
+UPDATE LIBRARY_BRANCH
+SET Latefee = 0.10
+WHERE branch_name = "North Branch";
+
+UPDATE LIBRARY_BRANCH
+SET Latefee = 5.00
+WHERE branch_name = "UTA Branch";
+
+SELECT * FROM BOOK_LOANS;
+SELECT * FROM LIBRARY_BRANCH;
+
+
+--Create a new view and drop old if exists
+DROP VIEW IF EXISTS vBookLoanInfo;
+
+CREATE VIEW vBookLoanInfo
+AS SELECT BR.card_no, BR.name, BL.date_out, BL.due_date, BL.returned_date, julianday(returned_date)-julianday(date_out) as TotalDays,
+B.title,
+CASE WHEN BL.late = 0 THEN 0
+ELSE julianday(returned_date)-julianday(due_date) END as DaysLate,
+LB.branch_id,
+CASE WHEN BL.late = 0 THEN 0
+ELSE ((julianday(returned_date)-julianday(due_date))* LB.Latefee) END AS LateFeeBalance
+
+FROM BORROWER as BR
+JOIN BOOK_LOANS as BL ON BR.card_no = BL.card_no
+JOIN BOOK as B ON BL.book_id = B.book_id
+JOIN LIBRARY_BRANCH as LB ON BL.branch_id = LB.branch_id;
+
+SELECT * FROM vBookLoanInfo;
