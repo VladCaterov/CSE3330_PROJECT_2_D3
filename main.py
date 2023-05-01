@@ -203,52 +203,52 @@ add_borrower_button.grid(row=6, column=0, columnspan=2, pady=5, padx=10)
 
 """TASK 3""" 
 ttk.Label(tab3, text ="ADD BOOK").grid(column = 0, row = 0, padx = 30, pady = 30)  
-task2_book_name= tk.Entry(tab3, width=30)
-task2_book_name.grid(row = 1, column=1, pady=5)
-task2_book_name_label= tk.Label(tab3, text='Book title: ')
-task2_book_name_label.grid(row=1, column=0,pady=5)
+task3_book_name= tk.Entry(tab3, width=30)
+task3_book_name.grid(row = 1, column=1, pady=5)
+task3_book_name_label= tk.Label(tab3, text='Book title: ')
+task3_book_name_label.grid(row=1, column=0,pady=5)
 
-task2_book_author= tk.Entry(tab3, width=30)
-task2_book_author.grid(row = 2, column=1, pady=5)
-task2_book_author_label= tk.Label(tab3, text='Book author: ')
-task2_book_author_label.grid(row=2, column=0,pady=5)
+task3_book_author= tk.Entry(tab3, width=30)
+task3_book_author.grid(row = 2, column=1, pady=5)
+task3_book_author_label= tk.Label(tab3, text='Book author: ')
+task3_book_author_label.grid(row=2, column=0,pady=5)
 
-task2_book_publisher= tk.Entry(tab3, width=30)
-task2_book_publisher.grid(row = 3, column=1, pady=5)
-task2_book_publisher_label= tk.Label(tab3, text='Book publisher: ')
-task2_book_publisher_label.grid(row=3, column=0,pady=5)
+task3_book_publisher= tk.Entry(tab3, width=30)
+task3_book_publisher.grid(row = 3, column=1, pady=5)
+task3_book_publisher_label= tk.Label(tab3, text='Book publisher: ')
+task3_book_publisher_label.grid(row=3, column=0,pady=5)
 
 def add_books_handler():
-  task2_warning=tk.Label(tab3, text='INPUT ERROR ', fg="red")
-  if(not task2_book_name.get() or
-     not task2_book_publisher.get() or
-     not task2_book_author.get()
+  task3_warning=tk.Label(tab3, text='INPUT ERROR ', fg="red")
+  if(not task3_book_name.get() or
+     not task3_book_publisher.get() or
+     not task3_book_author.get()
      ):
-      task2_warning.grid(row=6, column=0,pady=5)
+      task3_warning.grid(row=6, column=0,pady=5)
       return
   print("something")
   add_books_conn= sqlite3.connect("Library_Database.db")
   add_books_cur=add_books_conn.cursor()
   
   add_books_cur.execute("INSERT INTO BOOK (title, book_publisher) VALUES (:title, :publisher);",{
-      'title':task2_book_name.get(),
-      'publisher':task2_book_publisher.get()  
+      'title':task3_book_name.get(),
+      'publisher':task3_book_publisher.get()  
   })
 
 
   add_books_cur.execute("INSERT INTO BOOK_AUTHORS (book_id, author_name) VALUES ((SELECT book_id FROM BOOK WHERE title = :title), :author);",{
-      'title':task2_book_name.get(),
-      'author':task2_book_author.get()  
+      'title':task3_book_name.get(),
+      'author':task3_book_author.get()  
   })
 
   add_books_cur.execute("INSERT INTO BOOK_COPIES (book_id, branch_id, no_of_copies) SELECT Book.book_id, Library_Branch.branch_id, 5 FROM Book, Library_Branch WHERE title = :title;",{
-      'title':task2_book_name.get(),
+      'title':task3_book_name.get(),
   })
       
 
   add_books_conn.commit()
   add_books_conn.close()
-  task2_warning.destroy()
+  task3_warning.destroy()
   task2_success=tk.Label(tab3, text='SUCCESS', fg="green")
   task2_success.grid(row=7, column=0,pady=5)
 
@@ -265,12 +265,48 @@ ttk.Label(tab4,
                                row = 0,
                                padx = 30,
                                pady = 30)  
+
 """TASK 5""" 
-ttk.Label(tab5, 
-          text ="IMPLEMENT HERE").grid(column = 0, 
-                               row = 0,
-                               padx = 30,
-                               pady = 30)  
+ttk.Label(tab5, text ="LATE BOOKS").grid(column = 0, row = 0, padx = 30, pady = 30)  
+task5_date_1= tk.Entry(tab5, width=30)
+task5_date_1.grid(row = 1, column=1, pady=5)
+task5_date_1_label= tk.Label(tab5, text='START DATE: ')
+task5_date_1_label.grid(row=1, column=0,pady=5)
+
+task5_date_2= tk.Entry(tab5, width=30)
+task5_date_2.grid(row = 2, column=1, pady=5)
+task5_date_2_label= tk.Label(tab5, text='END DATE: ')
+task5_date_2_label.grid(row=2, column=0,pady=5)
+
+def search_lates_handler():
+  task5_warning=tk.Label(tab3, text='INPUT ERROR ', fg="red")
+  if(not utility.check_date(task5_date_1.get()) or
+     not utility.check_date(task5_date_2.get())
+     ):
+      task5_warning.grid(row=6, column=0,pady=5)
+      return
+  search_lates_conn= sqlite3.connect("Library_Database.db")
+  search_lates_cur=search_lates_conn.cursor()
+  search_lates_cur.execute('''SELECT title, julianday(BL.returned_date)-julianday(BL.due_date) AS Days_Late
+                              FROM Book_loans as BL JOIN Book as B on B.book_id = BL.book_id
+                              WHERE julianday(BL.returned_date)-julianday(BL.due_date) > 0 AND
+                              BL.due_date BETWEEN :date1 AND :date2;''', {      
+                                'date1': task5_date_1.get(),
+                                'date2': task5_date_2.get()
+                            })
+  records = search_lates_cur.fetchall()
+  print_records = ''
+  for record in records: 
+        #IF AN ATTRIBUT IS NOT STRING, YOU GOTTA str() it.
+        print_records += str("TITLE: "+record[0]+" | DAYS LATE: "+str(record[1])+"\n")
+  #this is inside handler so wont render till pressed
+  task5_result_label  = tk.Label(tab5, text=print_records)
+  task5_result_label.grid(row=7, column=0, columnspan=2, pady=5, padx=1)
+    
+
+search_lates_button = tk.Button(tab5, text = "Search Lates", command=search_lates_handler)
+search_lates_button.grid(row=4, column=0, columnspan=2, pady=5, padx=10)
+
 """TASK 6""" 
 ttk.Label(tab6, 
           text ="IMPLEMENT HERE").grid(column = 0, 

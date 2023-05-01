@@ -15,7 +15,7 @@ def check_id(input):
         return False
     print("failed id check")
 def check_date(input): 
-    date_pattern = "^^(0?[1-9]|[12][0-9]|3[01])[\/\-](0?[1-9]|1[012])[\/\-]\d{4}$"
+    date_pattern = "^\d{4}-\d{2}-\d{2}$"
     match = re.match(date_pattern, input)
     if match: return True
     else:
