@@ -184,18 +184,6 @@ def add_borrower_get_label():
     iq.commit()
     iq.close()
 
-<<<<<<< HEAD
-task2_warning=tk.Label(tab2, text='INPUT ERROR ', fg="red")
-
-def add_borrower_handler():
-    if(not utility.check_string(task2_name.get()) or
-      not utility.check_string(task2_address.get()) or
-      not utility.check_phone(task2_phone.get())):
-        task2_warning.grid(row=9, column=0,pady=5)
-        return
-    task2_warning.grid_forget()
-=======
-
 def add_borrower_handler():
     if(not utility.check_string(task2_name.get()) or
       not utility.check_string(task2_address.get())or
@@ -212,7 +200,6 @@ def add_borrower_handler():
                                 'phone_u': task2_phone.get(),
                                 
                               })
->>>>>>> fb4635f14844b11690d9e2d10b02024ae77dcf6e
     
     try:
       add_borrower_conn= sqlite3.connect("Library_Database.db")
