@@ -379,14 +379,58 @@ task6_borrower_id_label= tk.Label(tab6, text='Filter by ID: ')
 task6_borrower_id_label.grid(row=2, column=0,pady=5)
 
 task6_warning=tk.Label(tab6, text='INPUT ERROR ', fg="red")
+task6_result_label  = tk.Label(tab6, text="")
 
 def search_borrower_fees_handler():
-    if(not task6_borrower_name.get() and
-     not utility.check_id(task6_borrower_id.get()) 
-     ):
-      task5_warning.grid(row=6, column=0,pady=5)
-      return
-    task6_warning.grid_forget()
+    #This one is different from the rest, its an and statement
+    #because the user can use one or both filters.
+    task6_result_label.grid_forget()
+    search_borrowers_conn= sqlite3.connect("Library_Database.db")
+    search_borrowers_cur=search_borrowers_conn.cursor()
+    
+    #CASE 1: name only
+    if (task6_borrower_name.get() and not task6_borrower_id.get()):
+       search_borrowers_cur.execute('''SELECT card_no, name, SUM(LateFeeBalance)
+                                      FROM vBookLoanInfo
+                                      WHERE name LIKE :name 
+                                      GROUP BY card_no;''',{
+                                         'name':'%'+task6_borrower_name.get()+'%'
+                                      })
+    #CASE 2: ID only
+    elif (not task6_borrower_name.get() and task6_borrower_id.get()):
+       search_borrowers_cur.execute('''SELECT card_no, name, SUM(LateFeeBalance)
+                                      FROM vBookLoanInfo
+                                      WHERE card_no = :card_no 
+                                      GROUP BY card_no;''',{
+                                         'card_no':task6_borrower_id.get()
+                                      })
+    #CASE 3: NAME AND ID
+    elif (task6_borrower_name.get() and task6_borrower_id.get()):
+      search_borrowers_cur.execute('''SELECT card_no, name, SUM(LateFeeBalance)
+                                      FROM vBookLoanInfo
+                                      WHERE name LIKE :name AND
+                                      card_no = :card_no 
+                                      GROUP BY card_no;''',{
+                                         'name':'%'+task6_borrower_name.get()+'%',
+                                         'card_no':task6_borrower_id.get()
+                                      })
+    #CASE 4: no filters
+    else:
+      search_borrowers_cur.execute('''SELECT card_no, name, SUM(LateFeeBalance)
+                                      FROM vBookLoanInfo 
+                                      GROUP BY card_no;''')
+      
+    records = search_borrowers_cur.fetchall()
+    print_records = ''
+    for record in records: 
+          #IF AN ATTRIBUT IS NOT STRING, YOU GOTTA str() it.
+          late_fee = "${:.2f}".format(record[2]) if record[2] != 0 else "$0.00"
+          print_records += str("CARD NO: "+str(record[0])+" | NAME: "+record[1]+ " LATE FEE: ("+late_fee+")\n" )
+    #this is inside handler so wont render till pressed
+    task6_result_label.config(text=print_records)
+    task6_result_label.grid(row=7, column=0, columnspan=2, pady=5, padx=1)
+
+
     
 
 search_lates_button = tk.Button(tab6, text = "Filter", command=search_borrower_fees_handler)
