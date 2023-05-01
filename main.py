@@ -344,17 +344,56 @@ search_lates_button = tk.Button(tab5, text = "Search Lates", command=search_late
 search_lates_button.grid(row=4, column=0, columnspan=2, pady=5, padx=10)
 
 """TASK 6""" 
-ttk.Label(tab6, 
-          text ="IMPLEMENT HERE").grid(column = 0, 
-                               row = 0,
-                               padx = 30,
-                               pady = 30)  
-"""TASK 1""" 
-ttk.Label(tab7, 
-          text ="IMPLEMENT HERE").grid(column = 0, 
-                               row = 0,
-                               padx = 30,
-                               pady = 30)  
+ttk.Label(tab6, text ="BORROWER FEES").grid(column = 0, row = 0, padx = 30, pady = 30)  
+task6_borrower_name= tk.Entry(tab6, width=30)
+task6_borrower_name.grid(row = 1, column=1, pady=5)
+task6_borrower_name_label= tk.Label(tab6, text='Filter by Name: ')
+task6_borrower_name_label.grid(row=1, column=0,pady=5)
+
+task6_borrower_id= tk.Entry(tab6, width=30)
+task6_borrower_id.grid(row = 2, column=1, pady=5)
+task6_borrower_id_label= tk.Label(tab6, text='Filter by ID: ')
+task6_borrower_id_label.grid(row=2, column=0,pady=5)
+
+task6_warning=tk.Label(tab6, text='INPUT ERROR ', fg="red")
+
+def search_borrower_fees_handler():
+    if(not task6_borrower_name.get() and
+     not utility.check_id(task6_borrower_id.get()) 
+     ):
+      task5_warning.grid(row=6, column=0,pady=5)
+      return
+    task6_warning.grid_forget()
+    
+
+search_lates_button = tk.Button(tab6, text = "Filter", command=search_borrower_fees_handler)
+search_lates_button.grid(row=4, column=0, columnspan=2, pady=5, padx=10)
+
+"""TASK 7""" 
+ttk.Label(tab7, text ="BOOK INFO").grid(column = 0, row = 0, padx = 30, pady = 30)  
+task7_book_name= tk.Entry(tab7, width=30)
+task7_book_name.grid(row = 1, column=1, pady=5)
+task7_book_name_label= tk.Label(tab7, text='Filter by Name: ')
+task7_book_name_label.grid(row=1, column=0,pady=5)
+
+task7_book_id= tk.Entry(tab7, width=30)
+task7_book_id.grid(row = 2, column=1, pady=5)
+task7_book_id_label= tk.Label(tab7, text='Filter by ID: ')
+task7_book_id_label.grid(row=2, column=0,pady=5)
+
+task6_warning=tk.Label(tab7, text='INPUT ERROR ', fg="red")
+
+def search_book_view_handler():
+    if(not task7_book_name.get() and
+     not utility.check_id(task7_book_id.get()) 
+     ):
+      task5_warning.grid(row=6, column=0,pady=5)
+      return
+    task6_warning.grid_forget()
+    
+
+search_lates_button = tk.Button(tab7, text = "Filter", command=search_book_view_handler)
+search_lates_button.grid(row=4, column=0, columnspan=2, pady=5, padx=10)
 """DRIVER CODE""" 
 
 root.mainloop()

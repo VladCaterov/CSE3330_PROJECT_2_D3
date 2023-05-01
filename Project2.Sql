@@ -211,23 +211,23 @@ ADD COLUMN Latefee DECIMAL(2,2) DEFAULT 0.0;
 --Update columns to add a late fee
 UPDATE LIBRARY_BRANCH
 SET Latefee = 0.25
-WHERE branch_name = "Main Branch";
+WHERE branch_name = 'Main Branch';
 
 UPDATE LIBRARY_BRANCH
 SET Latefee = 0.20
-WHERE branch_name = "West Branch";
+WHERE branch_name = 'West Branch';
 
 UPDATE LIBRARY_BRANCH
 SET Latefee = 0.50
-WHERE branch_name = "East Branch";
+WHERE branch_name = 'East Branch';
 
 UPDATE LIBRARY_BRANCH
 SET Latefee = 0.10
-WHERE branch_name = "North Branch";
+WHERE branch_name = 'North Branch';
 
 UPDATE LIBRARY_BRANCH
 SET Latefee = 5.00
-WHERE branch_name = "UTA Branch";
+WHERE branch_name = 'UTA Branch';
 
 SELECT * FROM BOOK_LOANS;
 SELECT * FROM LIBRARY_BRANCH;
