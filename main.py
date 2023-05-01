@@ -151,6 +151,7 @@ task2_phone= tk.Entry(tab2, width=30)
 task2_phone.grid(row = 3, column=1,pady=5)
 task2_phone_label=tk.Label(tab2, text='Phone: ')
 task2_phone_label.grid(row=3, column=0,pady=5)
+task2_warning=tk.Label(tab1, text='INPUT ERROR ', fg="red")
 
 
 #buttons and handlers
@@ -172,21 +173,20 @@ def add_borrower_get_label():
         #IF AN ATTRIBUT IS NOT STRING, YOU GOTTA str() it.
         print_records += str("CARD NO: "+str(record[0])+"\n")
     #this is inside handler so wont render till pressed
+    task2_warning.destroy()
     task2_result_label  = tk.Label(tab2, text=print_records)
     task2_result_label.grid(row=7, column=0, columnspan=2, pady=5, padx=10)
     #ALWAYS DO THIS AFTER SQL
     iq.commit()
     iq.close()
 
-task2_warning=tk.Label(tab1, text='INPUT ERROR ', fg="red")
 
 def add_borrower_handler():
     if(not utility.check_string(task2_name.get()) or
-      not utility.check_string(task2_address.get())):
+      not utility.check_string(task2_address.get())or
+      not utility.check_phone(task2_phone.get())):
         task2_warning.grid(row=9, column=0,pady=5)
         return
-    task2_warning.grid_forget()
-        
     add_borrower_conn= sqlite3.connect("Library_Database.db")
     add_borrower_cur=add_borrower_conn.cursor()
     #dictionary implementation
