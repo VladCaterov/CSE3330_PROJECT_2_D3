@@ -441,7 +441,7 @@ search_lates_button.grid(row=4, column=0, columnspan=2, pady=5, padx=10)
 ttk.Label(tab7, text ="BOOK INFO").grid(column = 0, row = 0, padx = 30, pady = 30)  
 task7_book_name= tk.Entry(tab7, width=30)
 task7_book_name.grid(row = 1, column=1, pady=5)
-task7_book_name_label= tk.Label(tab7, text='Filter by Name: ')
+task7_book_name_label= tk.Label(tab7, text='Filter by Title: ')
 task7_book_name_label.grid(row=1, column=0,pady=5)
 
 task7_book_id= tk.Entry(tab7, width=30)
@@ -449,18 +449,62 @@ task7_book_id.grid(row = 2, column=1, pady=5)
 task7_book_id_label= tk.Label(tab7, text='Filter by ID: ')
 task7_book_id_label.grid(row=2, column=0,pady=5)
 
-task6_warning=tk.Label(tab7, text='INPUT ERROR ', fg="red")
+task7_warning=tk.Label(tab7, text='INPUT ERROR ', fg="red")
+task7_result_label  = tk.Label(tab7, text="")
 
-def search_book_view_handler():
-    if(not task7_book_name.get() and
-     not utility.check_id(task7_book_id.get()) 
-     ):
-      task5_warning.grid(row=6, column=0,pady=5)
-      return
-    task6_warning.grid_forget()
+def search_book_fees_handler():
+    #This one is different from the rest, its an and statement
+    #because the user can use one or both filters.
+    task7_result_label.grid_forget()
+    search_book_fee_conn= sqlite3.connect("Library_Database.db")
+    search_book_fee_cur=search_book_fee_conn.cursor()
+    
+    #CASE 1: name only
+    if (task7_book_name.get() and not task7_book_id.get()):
+       search_book_fee_cur.execute('''SELECT book_id, v.title, SUM(LateFeeBalance)
+                                      FROM vBookLoanInfo as v JOIN Book as B on B.title = v.title 
+                                      WHERE v.title LIKE :title
+                                      GROUP BY card_no
+                                      ORDER BY SUM(LateFeeBalance) DESC;''',{
+                                         'title':'%'+task7_book_name.get()+'%'
+                                      })
+    #CASE 2: ID only
+    elif (not task7_book_name.get() and task7_book_id.get()):
+       search_book_fee_cur.execute('''SELECT card_no, name, SUM(LateFeeBalance)
+                                      FROM vBookLoanInfo as v JOIN Book as B on B.title = v.title
+                                      WHERE book_id = :book_id 
+                                      GROUP BY card_no;''',{
+                                         'book_id':task7_book_id.get()
+                                      })
+    #CASE 3: NAME AND ID
+    elif (task7_book_name.get() and task7_book_id.get()):
+     search_book_fee_cur.execute('''SELECT book_id, v.title, SUM(LateFeeBalance)
+                                      FROM vBookLoanInfo as v JOIN Book as B on B.title = v.title
+                                      WHERE v.title LIKE :title AND
+                                      book_id = :book_id 
+                                      GROUP BY card_no;''',{
+                                         'title':'%'+task7_book_name.get()+'%',
+                                         'book_id':task7_book_id.get()
+                                      })
+    #CASE 4: no filters
+    else:
+      search_book_fee_cur.execute('''SELECT book_id, v.title, SUM(LateFeeBalance)
+                                      FROM vBookLoanInfo as v JOIN Book as B on B.title = v.title 
+                                      GROUP BY card_no
+                                      ORDER BY SUM(LateFeeBalance) DESC;''')
+      
+    records = search_book_fee_cur.fetchall()
+    print_records = ''
+    for record in records: 
+          #IF AN ATTRIBUT IS NOT STRING, YOU GOTTA str() it.
+          late_fee = "${:.2f}".format(record[2]) if record[2] != 0 else "Non-Applicable"
+          print_records += str("BOOK ID: "+str(record[0])+" | TITLE: "+record[1]+ " LATE FEE: ("+late_fee+")\n" )
+    #this is inside handler so wont render till pressed
+    task7_result_label.config(text=print_records)
+    task7_result_label.grid(row=7, column=0, columnspan=2, pady=5, padx=1)
     
 
-search_lates_button = tk.Button(tab7, text = "Filter", command=search_book_view_handler)
+search_lates_button = tk.Button(tab7, text = "Filter", command=search_book_fees_handler)
 search_lates_button.grid(row=4, column=0, columnspan=2, pady=5, padx=10)
 """DRIVER CODE""" 
 
